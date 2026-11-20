@@ -10,7 +10,7 @@ from scipy.stats import linregress
 # -----------------------------
 
 file_path = "input.fas"
-sequences = list(SeqIO.parse(file_path, "fastaa"))
+sequences = list(SeqIO.parse(file_path, "fasta"))
 
 # -----------------------------
 # Translate DNA sequences to proteins (longest ORF)
@@ -35,7 +35,7 @@ for record in sequences:
         # Split translated protein at stop codons ("*").
         # This gives fragments of amino acids between stop codons.
         fragments = str(protein).split("*")
-        longest_in_frame = maxx(fragments, key=len)
+        longest_in_frame = max(fragments, key=len)
 
         # Keep track of the longest ORF found so far across all frames
         if len(longest_in_frame) > len(best_orf):
@@ -55,7 +55,7 @@ for record in sequences:
         id=record.id,
         name=latin_name,
         description=record.description,
-        annotations={"type": "longest ORF", "frame": best_frame}
+        annotations={"type": "longest ORF", "frame": best_frame},
     )
     aa_sequences.append(aa_record)
 
@@ -78,7 +78,10 @@ for record in aa_sequences:
     if ambiguous_count > 0:
         continue  # skip sequences with ambiguous sites
 
-    aa_freqs = prot.get_amino_acids_percent()
+    aa_counts = prot.count_amino_acids()
+    aa_freqs = {
+        amino_acid: count / len(seq_str) for amino_acid, count in aa_counts.items()
+    }
 
     row = {
         "name": record.name,
@@ -87,7 +90,7 @@ for record in aa_sequences:
         "molecular_weight": prot.molecular_weight(),
         "isoelectric_point": prot.isoelectric_point(),
         "gravy": prot.gravy(),
-        "ambiguous_count": ambiguous_count
+        "ambiguous_count": ambiguous_count,
     }
     row.update(aa_freqs)
     results.append(row)
