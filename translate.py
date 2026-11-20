@@ -9,13 +9,12 @@ from scipy.stats import linregress
 # Read sequences
 # -----------------------------
 
-file_path = "input.fas"
+file_path = input("Enter the FASTA filename: ").strip()
 sequences = list(SeqIO.parse(file_path, "fasta"))
 
 # -----------------------------
 # Translate DNA sequences to proteins (longest ORF)
 # -----------------------------
-
 aa_sequences = []
 
 for record in sequences:
