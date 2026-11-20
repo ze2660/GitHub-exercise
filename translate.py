@@ -10,13 +10,12 @@ from scipy.stats import linregress
 # Read sequences
 # -----------------------------
 
-file_path = "input.fas"
-sequences = list(SeqIO.parse(file_path, "fastaa"))
+file_path = input("Enter the FASTA filename: ").strip()
+sequences = list(SeqIO.parse(file_path, "fasta"))
 
 # -----------------------------
 # Translate DNA sequences to proteins (longest ORF)
 # -----------------------------
-
 aa_sequences = []
 
 for record in sequences:
@@ -79,7 +78,10 @@ for record in aa_sequences:
     if ambiguous_count > 0:
         continue  # skip sequences with ambiguous sites
 
-    aa_freqs = prot.get_amino_acids_percent()
+    aa_counts = prot.count_amino_acids()
+    aa_freqs = {
+        amino_acid: count / len(seq_str) for amino_acid, count in aa_counts.items()
+    }
 
     row = {
         "name": record.name,
