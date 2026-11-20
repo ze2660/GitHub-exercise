@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -35,7 +36,7 @@ for record in sequences:
         # Split translated protein at stop codons ("*").
         # This gives fragments of amino acids between stop codons.
         fragments = str(protein).split("*")
-        longest_in_frame = maxx(fragments, key=len)
+        longest_in_frame = max(fragments, key=len)
 
         # Keep track of the longest ORF found so far across all frames
         if len(longest_in_frame) > len(best_orf):
@@ -55,7 +56,7 @@ for record in sequences:
         id=record.id,
         name=latin_name,
         description=record.description,
-        annotations={"type": "longest ORF", "frame": best_frame}
+        annotations={"type": "longest ORF", "frame": best_frame},
     )
     aa_sequences.append(aa_record)
 
@@ -87,13 +88,17 @@ for record in aa_sequences:
         "molecular_weight": prot.molecular_weight(),
         "isoelectric_point": prot.isoelectric_point(),
         "gravy": prot.gravy(),
-        "ambiguous_count": ambiguous_count
+        "ambiguous_count": ambiguous_count,
     }
     row.update(aa_freqs)
     results.append(row)
 
 df = pd.DataFrame(results)
 print(df.head())
+plt.scatter(df["length"], df["molecular_weight"])
+plt.xlabel("Protein Length (amino acids)")
+plt.ylabel("Molecular Weight (Da)")
+plt.show()
 
 # -----------------------------
 # END
