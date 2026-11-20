@@ -1,5 +1,5 @@
 import pandas as pd
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
